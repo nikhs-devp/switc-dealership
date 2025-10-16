@@ -265,6 +265,142 @@
             font-size: 12px;
             margin-left: 10px;
         }
+
+        .add-dealership-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .add-dealership-btn:hover {
+            background: #45a049;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #999;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-modal:hover {
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: white;
+            color: #666;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn-cancel:hover {
+            background: #f5f5f5;
+        }
+
+        .btn-submit {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn-submit:hover {
+            background: #45a049;
+        }
     </style>
 </head>
 <body>
@@ -302,7 +438,55 @@
     <div class="account-switch-page" id="accountSwitchPage">
         <button class="back-button" id="backButton">← Back to Dashboard</button>
         <h1 class="page-title">Switch Account</h1>
+        <button class="add-dealership-btn" id="addDealershipBtn">+ Add New Dealership</button>
         <div class="accounts-grid" id="accountsGrid"></div>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Add New Dealership</h2>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <form id="dealershipForm">
+                <div class="form-group">
+                    <label class="form-label" for="dealershipName">Dealership Name *</label>
+                    <input type="text" id="dealershipName" class="form-input" required placeholder="Enter dealership name">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="companyName">Company Name *</label>
+                    <input type="text" id="companyName" class="form-input" required placeholder="Enter company name">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="organizationId">Organization ID *</label>
+                    <input type="text" id="organizationId" class="form-input" required placeholder="Enter organization ID">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="phoneNumber">Phone Number *</label>
+                    <div style="display: flex; gap: 10px;">
+                        <select id="countryCode" class="form-input" style="width: 120px;" required>
+                            <option value="+1">+1 (US)</option>
+                            <option value="+44">+44 (UK)</option>
+                            <option value="+91">+91 (IN)</option>
+                            <option value="+61">+61 (AU)</option>
+                            <option value="+81">+81 (JP)</option>
+                            <option value="+86">+86 (CN)</option>
+                            <option value="+49">+49 (DE)</option>
+                            <option value="+33">+33 (FR)</option>
+                            <option value="+39">+39 (IT)</option>
+                            <option value="+34">+34 (ES)</option>
+                            <option value="+52">+52 (MX)</option>
+                            <option value="+55">+55 (BR)</option>
+                        </select>
+                        <input type="tel" id="phoneNumber" class="form-input" style="flex: 1;" required placeholder="Enter phone number">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn-submit">Submit Request</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script>
@@ -357,6 +541,11 @@
         const accountsGrid = document.getElementById('accountsGrid');
         const userName = document.getElementById('userName');
         const currentDealershipName = document.getElementById('currentDealershipName');
+        const addDealershipBtn = document.getElementById('addDealershipBtn');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const closeModal = document.getElementById('closeModal');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const dealershipForm = document.getElementById('dealershipForm');
 
         // Initialize
         userName.textContent = userData.name;
@@ -405,6 +594,53 @@
                 alert('Logging out...');
                 // Add logout logic here
             }
+        });
+
+        // Open add dealership modal
+        addDealershipBtn.addEventListener('click', () => {
+            modalOverlay.classList.add('active');
+            dealershipForm.reset();
+        });
+
+        // Close modal
+        closeModal.addEventListener('click', () => {
+            modalOverlay.classList.remove('active');
+        });
+
+        cancelBtn.addEventListener('click', () => {
+            modalOverlay.classList.remove('active');
+        });
+
+        // Close modal when clicking outside
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                modalOverlay.classList.remove('active');
+            }
+        });
+
+        // Submit dealership form
+        dealershipForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const countryCode = document.getElementById('countryCode').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            
+            const newDealership = {
+                id: dealerships.length + 1,
+                name: document.getElementById('dealershipName').value,
+                companyName: document.getElementById('companyName').value,
+                organizationId: document.getElementById('organizationId').value,
+                status: 'pending',
+                email: 'pending@verification.com',
+                phone: `${countryCode} ${phoneNumber}`,
+                address: 'Address pending verification',
+                manager: 'Manager to be assigned'
+            };
+            
+            dealerships.push(newDealership);
+            modalOverlay.classList.remove('active');
+            renderAccounts();
+            alert(`Dealership "${newDealership.name}" has been added with pending status!`);
         });
 
         // Update current dealership display
