@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dealership Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .profile-section {
+            position: relative;
+        }
+
+        .profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: background 0.3s;
+        }
+
+        .profile-trigger:hover {
+            background: #f0f0f0;
+        }
+
+        .profile-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #4CAF50;
+        }
+
+        .user-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .dropdown-icon {
+            transition: transform 0.3s;
+            color: #666;
+        }
+
+        .dropdown-icon.active {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            min-width: 250px;
+            display: none;
+            z-index: 1000;
+        }
+
+        .dropdown-menu.active {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background: #f8f8f8;
+        }
+
+        .dropdown-item.danger {
+            color: #f44336;
+        }
+
+        .dealership-info {
+            padding: 15px 20px;
+            background: #f8f8f8;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .dealership-name-display {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .main-content {
+            display: block;
+        }
+
+        .account-switch-page {
+            display: none;
+        }
+
+        .account-switch-page.active {
+            display: block;
+        }
+
+        .main-content.hidden {
+            display: none;
+        }
+
+        .page-title {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .accounts-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .account-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .account-card.active {
+            border: 2px solid #4CAF50;
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-badge.active {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .status-badge.pending {
+            background: #FFC107;
+            color: #333;
+        }
+
+        .dealership-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .account-details {
+            margin: 15px 0;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .account-details div {
+            margin-bottom: 8px;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #333;
+            margin-right: 5px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #45a049;
+        }
+
+        .btn-secondary {
+            background: #2196F3;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #0b7dda;
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #666;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        .back-button:hover {
+            background: #555;
+        }
+
+        .current-badge {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">Dealership Portal</div>
+        <div class="profile-section">
+            <div class="profile-trigger" id="profileTrigger">
+                <img src="https://via.placeholder.com/40" alt="Profile" class="profile-image" id="profileImage">
+                <span class="user-name" id="userName">John Doe</span>
+                <span class="dropdown-icon" id="dropdownIcon">▼</span>
+            </div>
+            <div class="dropdown-menu" id="dropdownMenu">
+                <div class="dealership-info">
+                    <div>Current Dealership:</div>
+                    <div class="dealership-name-display" id="currentDealershipName">AutoMax Motors</div>
+                </div>
+                <div class="dropdown-item" id="notificationsLink">
+                    <span>🔔</span> Notifications
+                </div>
+                <div class="dropdown-item" id="switchAccountLink">
+                    <span>🔄</span> Switch Account
+                </div>
+                <div class="dropdown-item danger" id="logoutLink">
+                    <span>🚪</span> Logout
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <h1 class="page-title">Dashboard</h1>
+        <p>Welcome to your dealership dashboard!</p>
+    </div>
+
+    <div class="account-switch-page" id="accountSwitchPage">
+        <button class="back-button" id="backButton">← Back to Dashboard</button>
+        <h1 class="page-title">Switch Account</h1>
+        <div class="accounts-grid" id="accountsGrid"></div>
+    </div>
+
+    <script>
+        // User data
+        const userData = {
+            name: "John Doe",
+            profileImage: "https://via.placeholder.com/40",
+            currentDealership: 0
+        };
+
+        // Dealerships data
+        const dealerships = [
+            {
+                id: 1,
+                name: "AutoMax Motors",
+                status: "active",
+                email: "contact@automaxmotors.com",
+                phone: "+1 234 567 8900",
+                address: "123 Main Street, New York, NY 10001",
+                manager: "Sarah Johnson"
+            },
+            {
+                id: 2,
+                name: "Premium Car Sales",
+                status: "active",
+                email: "info@premiumcarsales.com",
+                phone: "+1 234 567 8901",
+                address: "456 Oak Avenue, Los Angeles, CA 90001",
+                manager: "Michael Brown"
+            },
+            {
+                id: 3,
+                name: "Elite Auto Group",
+                status: "pending",
+                email: "support@eliteautogroup.com",
+                phone: "+1 234 567 8902",
+                address: "789 Pine Road, Chicago, IL 60601",
+                manager: "David Wilson"
+            }
+        ];
+
+        // DOM elements
+        const profileTrigger = document.getElementById('profileTrigger');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        const dropdownIcon = document.getElementById('dropdownIcon');
+        const switchAccountLink = document.getElementById('switchAccountLink');
+        const logoutLink = document.getElementById('logoutLink');
+        const notificationsLink = document.getElementById('notificationsLink');
+        const mainContent = document.getElementById('mainContent');
+        const accountSwitchPage = document.getElementById('accountSwitchPage');
+        const backButton = document.getElementById('backButton');
+        const accountsGrid = document.getElementById('accountsGrid');
+        const userName = document.getElementById('userName');
+        const currentDealershipName = document.getElementById('currentDealershipName');
+
+        // Initialize
+        userName.textContent = userData.name;
+        updateCurrentDealership();
+
+        // Toggle dropdown
+        profileTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('active');
+            dropdownIcon.classList.toggle('active');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!profileTrigger.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                dropdownMenu.classList.remove('active');
+                dropdownIcon.classList.remove('active');
+            }
+        });
+
+        // Switch account
+        switchAccountLink.addEventListener('click', () => {
+            dropdownMenu.classList.remove('active');
+            dropdownIcon.classList.remove('active');
+            mainContent.classList.add('hidden');
+            accountSwitchPage.classList.add('active');
+            renderAccounts();
+        });
+
+        // Back to dashboard
+        backButton.addEventListener('click', () => {
+            accountSwitchPage.classList.remove('active');
+            mainContent.classList.remove('hidden');
+        });
+
+        // Notifications
+        notificationsLink.addEventListener('click', () => {
+            dropdownMenu.classList.remove('active');
+            dropdownIcon.classList.remove('active');
+            alert('Notifications feature coming soon!');
+        });
+
+        // Logout
+        logoutLink.addEventListener('click', () => {
+            if (confirm('Are you sure you want to logout?')) {
+                alert('Logging out...');
+                // Add logout logic here
+            }
+        });
+
+        // Update current dealership display
+        function updateCurrentDealership() {
+            const current = dealerships[userData.currentDealership];
+            currentDealershipName.textContent = current.name;
+        }
+
+        // Render accounts
+        function renderAccounts() {
+            accountsGrid.innerHTML = '';
+            
+            dealerships.forEach((dealership, index) => {
+                const isCurrent = index === userData.currentDealership;
+                
+                const card = document.createElement('div');
+                card.className = `account-card ${isCurrent ? 'active' : ''}`;
+                
+                card.innerHTML = `
+                    <span class="status-badge ${dealership.status}">${dealership.status}</span>
+                    <div class="dealership-name">
+                        ${dealership.name}
+                        ${isCurrent ? '<span class="current-badge">CURRENT</span>' : ''}
+                    </div>
+                    <div class="account-details">
+                        <div><span class="detail-label">Email:</span>${dealership.email}</div>
+                        <div><span class="detail-label">Phone:</span>${dealership.phone}</div>
+                        <div><span class="detail-label">Manager:</span>${dealership.manager}</div>
+                        <div><span class="detail-label">Address:</span>${dealership.address}</div>
+                    </div>
+                    <button class="btn ${isCurrent ? 'btn-primary' : 'btn-secondary'}" 
+                            ${isCurrent ? 'disabled' : ''} 
+                            data-index="${index}">
+                        ${isCurrent ? 'Selected' : 'Set as Default'}
+                    </button>
+                `;
+                
+                accountsGrid.appendChild(card);
+                
+                // Add click event to button
+                if (!isCurrent) {
+                    const btn = card.querySelector('button');
+                    btn.addEventListener('click', () => setDefaultAccount(index));
+                }
+            });
+        }
+
+        // Set default account
+        function setDefaultAccount(index) {
+            userData.currentDealership = index;
+            updateCurrentDealership();
+            renderAccounts();
+            alert(`Switched to ${dealerships[index].name}`);
+        }
+    </script>
+</body>
+</html>
